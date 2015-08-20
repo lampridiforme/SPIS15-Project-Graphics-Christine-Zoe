@@ -1,0 +1,58 @@
+from PIL import Image, ImageDraw
+import random
+zebra = Image.open("zebra.jpg")
+photo = Image.open("photo.png")
+
+def getComposite(im, thresh, x, y):
+    (red,green,blue) = im.getpixel((x,y)) 
+    redResult = abs(red - thresh[0])
+    greenResult = abs(green - thresh[1])
+    blueResult = abs(blue - thresh[2])
+    composite = (redResult + greenResult + blueResult)
+    return (redResult + greenResult + blueResult)
+
+def greenScreen(im):
+    """Removes green and applies white"""
+    (width,height) = im.size
+    for x in range(0,width):
+        for y in range(0,height):
+            thresh = [157, 190, 75]
+            comp = getComposite(im, thresh, x, y)
+            if  comp < 85:
+                newRed = 255
+                newGreen = 255
+                newBlue = 255
+                im.putpixel((x, y), (newRed, newGreen, newBlue))
+            thresh = [100, 140, 75]
+            comp = getComposite(im, thresh, x, y)
+            if  comp < 55:
+                newRed = 255
+                newGreen = 255
+                newBlue = 255
+                im.putpixel((x, y), (newRed, newGreen, newBlue)) 
+    print getComposite(im, thresh, x, y)
+
+
+
+                
+##    thresh = [60, 100, 25]
+##    for x in range(0,width):
+##        for y in range(0,height):
+##            (red,green,blue) = im.getpixel((x,y))
+##            redResult = abs(red - thresh[0])
+##            greenResult = abs(green - thresh[1])
+##            blueResult = abs(blue - thresh[2])
+##            composite = (redResult + greenResult + blueResult)
+##            if  composite < 60:
+##                newRed = 255
+##                newGreen = 255
+##                newBlue = 255
+##                im.putpixel((x, y), (newRed, newGreen, newBlue))
+ 
+    
+    #Draw image        
+    im.show()
+
+def pixelColor(x,y):
+    return photo.getpixel((x,y))
+
