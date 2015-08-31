@@ -2,6 +2,11 @@ from PIL import Image, ImageDraw
 import random
 zebra = Image.open("zebra.jpg")
 photo = Image.open("photo.png")
+sample = Image.open("green-screen.jpg")
+photo1 = Image.open("thatme.jpg")
+photo2 = Image.open("photo2.jpg")
+ohno = Image.open("ohno.jpg")
+beach = Image.open("beach.jpg")
 
 def getComposite(im, thresh, x, y):
     (red,green,blue) = im.getpixel((x,y)) 
@@ -11,7 +16,7 @@ def getComposite(im, thresh, x, y):
     composite = (redResult + greenResult + blueResult)
     return (redResult + greenResult + blueResult)
 
-def greenScreen(im):
+def removeBackground(im):
     """Removes green and applies white"""
     (width,height) = im.size
     for x in range(0,width):
@@ -19,18 +24,135 @@ def greenScreen(im):
             thresh = [157, 190, 75]
             comp = getComposite(im, thresh, x, y)
             if  comp < 85:
-                newRed = 255
+                newRed = 0
                 newGreen = 255
-                newBlue = 255
+                newBlue = 0
                 im.putpixel((x, y), (newRed, newGreen, newBlue))
             thresh = [100, 140, 75]
             comp = getComposite(im, thresh, x, y)
             if  comp < 55:
-                newRed = 255
+                newRed = 0
                 newGreen = 255
-                newBlue = 255
-                im.putpixel((x, y), (newRed, newGreen, newBlue)) 
-    print getComposite(im, thresh, x, y)
+                newBlue = 0
+                im.putpixel((x, y), (newRed, newGreen, newBlue))
+            thresh = [60, 100, 25]
+            comp = getComposite(im, thresh, x, y)
+            if  comp < 55:
+                newRed = 0
+                newGreen = 255
+                newBlue = 0
+                im.putpixel((x, y), (newRed, newGreen, newBlue))
+            thresh = [0,230,0]
+            comp = getComposite(im, thresh, x, y)
+            if  comp < 100:
+                newRed = 0
+                newGreen = 255
+                newBlue = 0
+                im.putpixel((x, y), (newRed, newGreen, newBlue))
+            thresh = [0,255,50]
+            comp = getComposite(im, thresh, x, y)
+            if  comp < 100:
+                newRed = 0
+                newGreen = 255
+                newBlue = 0
+                im.putpixel((x, y), (newRed, newGreen, newBlue))
+            thresh = [96, 140, 75]
+            comp = getComposite(im, thresh, x, y)
+            if  comp < 40:
+                newRed = 0
+                newGreen = 255
+                newBlue = 0
+                im.putpixel((x, y), (newRed, newGreen, newBlue))
+            thresh = [89, 97, 45]
+            comp = getComposite(im, thresh, x, y)
+            if  comp < 35:
+                newRed = 0
+                newGreen = 255
+                newBlue = 0
+                im.putpixel((x, y), (newRed, newGreen, newBlue))
+            thresh = [100, 132, 255]
+            comp = getComposite(im, thresh, x, y)
+            if  comp < 50:
+                newRed = 0
+                newGreen = 255
+                newBlue = 0
+                im.putpixel((x, y), (newRed, newGreen, newBlue))
+            thresh = [213, 210, 103]
+            comp = getComposite(im, thresh, x, y)
+            if  comp < 50:
+                newRed = 0
+                newGreen = 255
+                newBlue = 0
+                im.putpixel((x, y), (newRed, newGreen, newBlue))
+            thresh = [142, 139, 44]
+            comp = getComposite(im, thresh, x, y)
+            if  comp < 60:
+                newRed = 0
+                newGreen = 255
+                newBlue = 0
+                im.putpixel((x, y), (newRed, newGreen, newBlue))
+            thresh = [242, 231, 113]
+            comp = getComposite(im, thresh, x, y)
+            if  comp < 50:
+                newRed = 0
+                newGreen = 255
+                newBlue = 0
+                im.putpixel((x, y), (newRed, newGreen, newBlue))
+
+def colorReplace(im):
+    im = Image.new('RGB', im.size, (0, 0, 0))
+    (width, height) = im.size
+    print width
+    print height
+    for x in range(width):
+        for y in range(height):
+            (r,g,b) = im.getpixel( (x, y) )
+            newr = r 
+            newg = g
+            newb = b
+    for x in range(width):
+        for y in range(height):
+            (r,g,b) = im.getpixel( (x, y) )
+            im.putpixel((x, y),(newr,newg,newb))
+            
+##Create function that takes the background and replaces the bright green
+##PROBLEM: Function takes at least 30 seconds to run, speed up somehow.
+def getBackData(back, fore):
+##Initialize images
+    draw = ImageDraw.Draw(back)
+    draw = ImageDraw.Draw(fore)
+##Turns background neon green to increase contrast
+    removeBackground(fore)
+##Image should only be as large as the greenscreened image
+    (width, height) = fore.size
+    (width1, height1) = back.size
+##Conditional statement deciding whether or not the background is large enough. 
+    if width > width1:
+        return "The background image needs to be larger than the foreground."
+##Set height of background and foreground equal to each other
+    height1 = height
+##Loop containing the width and height of the foreground
+    for x in range(width):
+        for y in range(height):
+##Set the RGB values for the back pixels to a variable
+            (r,g,b) = back.getpixel( (x, y) )
+            br = r
+            bg = g
+            bb = b
+##Set the RGB values for the front pixels to a variable
+            (r,g,b) = fore.getpixel( (x, y) )
+            fr = r
+            fg = g
+            fb = b
+##If the value is bright green, replace with the background pixels stored in the variable
+            if (fr, fg, fb) == (0, 255, 0):
+                fore.putpixel((x, y),(br,bg,bb))
+    fore.show()
+
+
+
+                
+##    print getComposite(im, thresh, x, y)
 
 
 
@@ -51,7 +173,7 @@ def greenScreen(im):
  
     
     #Draw image        
-    im.show()
+    
 
 def pixelColor(x,y):
     return photo.getpixel((x,y))
