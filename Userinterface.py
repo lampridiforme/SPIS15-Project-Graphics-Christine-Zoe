@@ -161,30 +161,77 @@ def transparency(image):
 
 
 import Tkinter
-from Tkinter import Tk, Label, CENTER
+from Tkinter import Tk, Label, CENTER, Canvas, NW
 
 app=Tk()
 beach = Image.open("beach.jpg")
 Zoe = Image.open("trans1.png")
 
-app.title ("Chroma key tool")
-app.geometry(str(beach.size[0]) + 'x' + str(beach.size[1]))
-photo=ImageTk.PhotoImage(beach)
-panel =Label(app,image=photo)
-photo1=ImageTk.PhotoImage(Zoe)
-panel1=Label(app,image=photo1)
-panel.pack()
 
-panel1.place(relx=0.5, rely=0.5, anchor=CENTER)
+canvas=Canvas(app,width=beach.size[0],height=beach.size[1])
+canvas.pack()
+
+
+
+app.title ("Chroma key tool")
+photo=ImageTk.PhotoImage(beach)
+canvas.create_image((0,0), image= photo, anchor=NW)
+photo1=ImageTk.PhotoImage(Zoe)
+zoeid= canvas.create_image((0,0), image= photo1, anchor=NW)
+#canvas.move(zoeid, )
+
+
+def key(event):
+
+    global scaling_factor
+    if event.char == '>':
+        scaling_factor = scaling_factor + 0.1
+        resize()
+    
+
+    elif event.char == '<':
+        scaling_factor = scaling_factor - 0.1
+        resize()
+
+    elif event.char=="<Right>":
+        x=x+5
+        print x
+    
+
+    #elif event.char
+    
+(x,y)=canvas.coords(zoeid)
+##if
+canvas.bind("<Right>", lambda event:canvas.move(zoeid,5,0))
+##    x=x+5
+
+
+canvas.bind("<Left>", lambda event:canvas.move(zoeid,-5,0))
+
+canvas.bind("<Up>", lambda event:canvas.move(zoeid,0,-5))
+
+canvas.bind("<Down>", lambda event:canvas.move(zoeid,0,5))
+canvas.focus_set()
+
+canvas.bind("<Key>", key)
+    #print canvas.coords(zoeid)
+    #coords
+
+scaling_factor = 1.0
+
+def resize():
+    global canvas, zoeid, photo1, Zoe, scaling_factor, coorx, coory,x,y
+    (x,y)= canvas.coords(zoeid)
+    
+    if zoeid:
+        canvas.delete(zoeid)
+
+    size = int(scaling_factor * Zoe.size[0]), int(scaling_factor * Zoe.size[1])
+    photo1 = ImageTk.PhotoImage(Zoe.resize(size))
+    zoeid= canvas.create_image((x,y), image=photo1)
+
 app.mainloop()
 
 
 
-##root=Tk()
-##ImageTk.PhotoImage(Image.open("beach.jpg"))
-##panel =Label (root,image=img)
-##panel.pack(side="bottom", fill="both", expand="es")
-##root.mainloop()
-##
-##photo = PhotoImage(file="beach.jpg")
 
