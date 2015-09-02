@@ -10,17 +10,16 @@ beach = Image.open("beach.jpg")
 test = Image.open("test.png")
 croptest = Image.open("testForCropping.png")
 
-
-
-def transparency(image):
-    image = image.convert("RGBA")
-    pixdata = image.load()
-    for y in xrange(image.size[1]):
-        for x in xrange(image.size[0]):
-            if pixdata[x, y] == (0, 255, 0, 255):
-                pixdata[x, y] = (255, 255, 255, 0)
+def crop(image, startx, starty, endx, endy):
+    image.crop((startx, starty, endx, endy))
     image.show()
     image.save("img2.png", "PNG")
 
-#YESSSS IT WORKS
-#Code credit: http://stackoverflow.com/questions/765736/using-pil-to-make-all-white-pixels-transparent 
+def cropMark2(image):
+    outfile = "croppedImage.jpg"
+    image.copy()
+
+    crop_img = image.crop((0, 0, 500, 500))
+    crop_img.thumbnail((100,100), Image.ANTIALIAS)
+    crop_img.save(outfile, "JPEG")
+    
